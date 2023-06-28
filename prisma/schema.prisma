@@ -36,6 +36,8 @@ model Account {
     id_token          String? @db.Text
     session_state     String?
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    Topic             Topic?  @relation(fields: [topicId], references: [id])
+    topicId           String?
 
     @@unique([provider, providerAccountId])
 }
@@ -46,6 +48,8 @@ model Session {
     userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    Topic        Topic?   @relation(fields: [topicId], references: [id])
+    topicId      String?
 }
 
 model User {
@@ -56,6 +60,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    topics         Topic[]
 }
 
 model VerificationToken {
@@ -64,4 +69,27 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+// Notes
+model Topic {
+    id        String    @id @default(cuid())
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    title     String
+    user      User      @relation(fields: [userId], references: [id])
+    userId    String
+    notes     Note[]
+    Account   Account[]
+    Session   Session[]
+}
+
+model Note {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    title     String
+    content   String   @db.Text
+    topic     Topic?   @relation(fields: [topicId], references: [id])
+    topicId   String?
 }
