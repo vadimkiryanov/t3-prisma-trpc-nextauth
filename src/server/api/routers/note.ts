@@ -3,10 +3,10 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 export const noteRouter = createTRPCRouter({
-    // Получение записок
+  // Получение записок
   getAll: protectedProcedure
     .input(z.object({ topicId: z.string() }))
-    .mutation(({ ctx, input }) => {
+    .query(({ ctx, input }) => {
       return ctx.prisma.note.findMany({
         where: {
           topicId: input.topicId,
@@ -14,7 +14,7 @@ export const noteRouter = createTRPCRouter({
       });
     }),
 
-     // Создание записок
+  // Создание записок
   create: protectedProcedure
     .input(
       z.object({ title: z.string(), content: z.string(), topicId: z.string() })
@@ -29,7 +29,7 @@ export const noteRouter = createTRPCRouter({
       });
     }),
 
-   // Удаление записок
+  // Удаление записок
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {

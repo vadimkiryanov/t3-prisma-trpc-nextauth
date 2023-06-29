@@ -1,9 +1,9 @@
-
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import Header from "~/components/Header";
+import { NoteEditor } from "~/components/NoteEditor";
 import { api, type RouterOutputs } from "~/utils/api";
 
 export default function Home() {
@@ -71,10 +71,26 @@ const Content: React.FC = () => {
     }
   );
 
+  // Создание топика
   const createTopic = api.topic.create.useMutation({
     // Обновление состояния топиков, когда отправка топика прошла успешно
     onSuccess: () => {
       void refetchTopics();
+    },
+  });
+
+  const { data: notes, refetch: refetchNotes } = api.note.getAll.useQuery(
+    {
+      topicId: selectedTopic?.id ?? "",
+    },
+    {
+      enabled: sessionData?.user !== undefined && selectedTopic !== null,
+    }
+  );
+
+  const createNote = api.note.create.useMutation({
+    onSuccess: () => {
+      void refetchNotes;
     },
   });
 
@@ -113,7 +129,17 @@ const Content: React.FC = () => {
           }}
         />
       </div>
-      <div className="col-span-3"></div>
+      <div className="col-span-3">
+        <NoteEditor
+          onSave={({ title, content }) => {
+            void createNote.mutate({
+              title,
+              content,
+              topicId: selectedTopic?.id ?? "",
+            });
+          }}
+        />
+      </div>
     </div>
   );
 };
