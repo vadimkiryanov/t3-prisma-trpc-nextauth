@@ -1,12 +1,14 @@
+
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
+import { useState } from "react";
 import Header from "~/components/Header";
-import { api } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 
 export default function Home() {
   const hello = api.example.hello.useQuery({
-    text: "Hello",
+    text: "World",
   });
 
   return (
@@ -18,12 +20,14 @@ export default function Home() {
       </Head>
       <main>
         <Header />
+        <Content />
         <AuthShowcase />
       </main>
     </>
   );
 }
 
+// Проверка авторизации
 function AuthShowcase() {
   const { data: sessionData } = useSession();
 
@@ -47,3 +51,69 @@ function AuthShowcase() {
     </div>
   );
 }
+
+// Контент Топиков
+type Topic = RouterOutputs["topic"]["getAll"][0];
+
+const Content: React.FC = () => {
+  const { data: sessionData } = useSession();
+
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+
+  // Получение всех топиков
+  const { data: topics, refetch: refetchTopics } = api.topic.getAll.useQuery(
+    undefined,
+    {
+      enabled: sessionData?.user !== undefined,
+      onSuccess: (data) => {
+        setSelectedTopic(selectedTopic ?? data[0] ?? null);
+      },
+    }
+  );
+
+  const createTopic = api.topic.create.useMutation({
+    // Обновление состояния топиков, когда отправка топика прошла успешно
+    onSuccess: () => {
+      void refetchTopics();
+    },
+  });
+
+  return (
+    <div className="mx-5 mt-5 grid grid-cols-4 gap-2">
+      <div className="px-2">
+        <ul className="menu rounded-box w-56 bg-base-100 p-2">
+          {topics?.map((topic) => (
+            <li key={topic.id}>
+              <a
+                href="#"
+                onClick={(evt) => {
+                  evt.preventDefault();
+                  setSelectedTopic(topic);
+                }}
+              >
+                {topic.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <div className="divider"></div>
+        <input
+          type="text"
+          placeholder="New Topic"
+          className="input-bordered input input-sm w-full"
+          onKeyDown={(e) => {
+            // Создание топика
+            if (e.key === "Enter") {
+              createTopic.mutate({
+                title: e.currentTarget.value,
+              });
+              e.currentTarget.value = "";
+            }
+          }}
+        />
+      </div>
+      <div className="col-span-3"></div>
+    </div>
+  );
+};
