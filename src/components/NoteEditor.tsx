@@ -6,8 +6,10 @@ import { languages } from "@codemirror/language-data";
 
 export const NoteEditor = ({
   onSave,
+  isFetching,
 }: {
   onSave: (note: { title: string; content: string }) => void;
+  isFetching?: boolean;
 }) => {
   const [code, setCode] = useState<string>("");
   const [title, setTitle] = useState<string>("");
@@ -48,9 +50,10 @@ export const NoteEditor = ({
             setCode("");
             setTitle("");
           }}
-          className="btn-primary btn"
+          className="btn-primary btn mb-7 mr-7"
           disabled={title.trim().length === 0 || code.trim().length === 0}
         >
+          {isFetching && <span className="loading loading-spinner"></span>}
           Save
         </button>
       </div>
