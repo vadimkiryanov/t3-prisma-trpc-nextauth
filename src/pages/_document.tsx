@@ -3,7 +3,7 @@ import React from "react";
 
 const Document = () => {
   return (
-    <Html data-theme="synthwave">
+    <Html data-theme="coffee">
       <Head />
       <body>
         <Main />

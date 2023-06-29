@@ -1,10 +1,10 @@
 /**
- * YOU PROBABLY DON'T NEED TO EDIT THIS FILE, UNLESS:
- * 1. You want to modify request context (see Part 1).
- * 2. You want to create a new middleware or type of procedure (see Part 3).
- *
- * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
- * need to use are documented accordingly near the end.
+* ВОЗМОЖНО, ВАМ НЕ НУЖНО РЕДАКТИРОВАТЬ ЭТОТ ФАЙЛ, ЕСЛИ ТОЛЬКО:
+* 1. Вы хотите изменить контекст запроса (см. Часть 1).
+* 2. Вы хотите создать новое промежуточное ПО или тип процедуры (см. Часть 3).
+*
+* TL;DR — здесь создаются и подключаются все компоненты сервера tRPC.
+* Необходимость использования задокументирована соответственно ближе к концу.
  */
 
 import { initTRPC, TRPCError } from "@trpc/server";
@@ -16,11 +16,11 @@ import { getServerAuthSession } from "~/server/auth";
 import { prisma } from "~/server/db";
 
 /**
- * 1. CONTEXT
+* 1. КОНТЕКСТ
  *
- * This section defines the "contexts" that are available in the backend API.
+ * В этом разделе определяются «контексты», доступные во внутреннем API.
  *
- * These allow you to access things when processing a request, like the database, the session, etc.
+ * Они позволяют вам получить доступ к вещам при обработке запроса, таким как база данных, сеанс и т. д.
  */
 
 type CreateContextOptions = {
@@ -28,12 +28,12 @@ type CreateContextOptions = {
 };
 
 /**
- * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
- * it from here.
+* Этот помощник генерирует «внутренние элементы» для контекста tRPC. Если вам нужно использовать его, вы можете экспортировать
+ * это отсюда.
  *
- * Examples of things you may need it for:
- * - testing, so we don't have to mock Next.js' req/res
- * - tRPC's `createSSGHelpers`, where we don't have req/res
+ * Примеры вещей, для которых он может понадобиться:
+ * - тестирование, поэтому нам не нужно издеваться над req/res Next.js
+ * - `createSSGHelpers` tRPC, где у нас нет req/res
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
@@ -45,8 +45,8 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
 };
 
 /**
- * This is the actual context you will use in your router. It will be used to process every request
- * that goes through your tRPC endpoint.
+* Это фактический контекст, который вы будете использовать в своем маршрутизаторе. Он будет использоваться для обработки каждого запроса
+ * который проходит через вашу конечную точку tRPC.
  *
  * @see https://trpc.io/docs/context
  */
@@ -62,11 +62,11 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 };
 
 /**
- * 2. INITIALIZATION
+* 2. ИНИЦИАЛИЗАЦИЯ
  *
- * This is where the tRPC API is initialized, connecting the context and transformer. We also parse
- * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
- * errors on the backend.
+ * Здесь инициализируется API tRPC, соединяющий контекст и преобразователь. Мы также разбираем
+ * ZodErrors, чтобы обеспечить безопасность типов во внешнем интерфейсе в случае сбоя процедуры из-за проверки.
+ * ошибки на бэкенде.
  */
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
@@ -84,29 +84,29 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 });
 
 /**
- * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
+* 3. МАРШРУТИЗАТОР И ПРОЦЕДУРА (ВАЖНАЯ ЧАСТЬ)
  *
- * These are the pieces you use to build your tRPC API. You should import these a lot in the
- * "/src/server/api/routers" directory.
+ * Это элементы, которые вы используете для создания API tRPC. Вы должны импортировать их много в
+ * Каталог "/src/server/api/routers".
  */
 
 /**
- * This is how you create new routers and sub-routers in your tRPC API.
+ * Вот как вы создаете новые маршрутизаторы и подмаршрутизаторы в своем API tRPC.
  *
  * @see https://trpc.io/docs/router
  */
 export const createTRPCRouter = t.router;
 
 /**
- * Public (unauthenticated) procedure
+* Публичная (неаутентифицированная) процедура
  *
- * This is the base piece you use to build new queries and mutations on your tRPC API. It does not
- * guarantee that a user querying is authorized, but you can still access user session data if they
- * are logged in.
+ * Это базовая часть, которую вы используете для создания новых запросов и изменений в вашем API tRPC. Это не
+ * гарантировать, что запрос пользователя авторизован, но вы все равно можете получить доступ к данным сеанса пользователя, если они
+ * вошли в систему.
  */
 export const publicProcedure = t.procedure;
 
-/** Reusable middleware that enforces users are logged in before running the procedure. */
+/** Повторно используемое промежуточное ПО, которое обеспечивает вход пользователей в систему перед запуском процедуры. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -120,10 +120,10 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 });
 
 /**
- * Protected (authenticated) procedure
+* Защищенная (аутентифицированная) процедура
  *
- * If you want a query or mutation to ONLY be accessible to logged in users, use this. It verifies
- * the session is valid and guarantees `ctx.session.user` is not null.
+ * Если вы хотите, чтобы запрос или мутация были доступны ТОЛЬКО зарегистрированным пользователям, используйте это. Он проверяет
+ * сеанс действителен и гарантирует, что `ctx.session.user` не равен нулю.
  *
  * @see https://trpc.io/docs/procedures
  */
