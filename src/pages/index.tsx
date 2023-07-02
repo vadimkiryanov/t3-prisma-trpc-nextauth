@@ -89,6 +89,13 @@ const Content: React.FC = () => {
     },
   });
 
+  // Удаление топика
+  const onDeleteTopic = api.topic.delete.useMutation({
+    onSuccess: () => {
+      void refetchTopics();
+    },
+  });
+
   const {
     data: notes,
     refetch: refetchNotes,
@@ -118,8 +125,12 @@ const Content: React.FC = () => {
       <div className="px-2">
         <ul className="menu rounded-box w-56 bg-base-100 p-2">
           {topics?.map((topic) => (
-            <li key={topic.id}>
+            <li
+              className="mb-2 flex flex-row justify-between gap-3"
+              key={topic.id}
+            >
               <a
+                className=" flex-1"
                 href="#"
                 onClick={(evt) => {
                   evt.preventDefault();
@@ -128,6 +139,29 @@ const Content: React.FC = () => {
               >
                 {topic.title}
               </a>
+              <button
+                className="btn-circle btn w-3"
+                onClick={() => {
+                  void onDeleteTopic.mutate({
+                    id: topic.id,
+                  });
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
             </li>
           ))}
         </ul>

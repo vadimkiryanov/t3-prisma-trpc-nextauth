@@ -29,7 +29,7 @@ export const noteRouter = createTRPCRouter({
       });
     }),
 
-  // Удаление записок
+  // Удаление записок по одному
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
