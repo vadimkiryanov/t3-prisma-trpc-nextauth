@@ -119,6 +119,20 @@ const Content: React.FC = () => {
       void refetchNotes();
     },
   });
+  const deleteNoteMany = api.note.deleteMany.useMutation({
+    onSuccess: () => {
+      void refetchNotes();
+    },
+  });
+
+  const deleteTopicWithNotes = (topicId: string) => {
+    void deleteNoteMany.mutate({
+      topicId: topicId,
+    });
+    void onDeleteTopic.mutate({
+      id: topicId,
+    });
+  };
 
   return (
     <div className="mx-5 mt-5 grid grid-cols-4 gap-2">
@@ -141,11 +155,7 @@ const Content: React.FC = () => {
               </a>
               <button
                 className="btn-circle btn w-3"
-                onClick={() => {
-                  void onDeleteTopic.mutate({
-                    id: topic.id,
-                  });
-                }}
+                onClick={() => deleteTopicWithNotes(topic.id)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

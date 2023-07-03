@@ -39,4 +39,14 @@ export const noteRouter = createTRPCRouter({
         },
       });
     }),
+  // Удаление записок по многу
+  deleteMany: protectedProcedure
+    .input(z.object({ topicId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.note.deleteMany({
+        where: {
+          topicId: input.topicId,
+        },
+      });
+    }),
 });
