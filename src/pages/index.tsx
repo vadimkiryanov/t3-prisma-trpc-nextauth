@@ -42,7 +42,6 @@ function AuthShowcase() {
 
   return (
     <>
-      
       {!sessionData && <Welcome />}
       {sessionData && <Content />}
       <div className="flex flex-col items-center justify-center gap-4">
@@ -120,18 +119,23 @@ const Content: React.FC = () => {
       void refetchNotes();
     },
   });
+
+  const [topicID, setTopicID] = useState("");
   const deleteNoteMany = api.note.deleteMany.useMutation({
     onSuccess: () => {
       void refetchNotes();
+      void onDeleteTopic.mutate({
+        id: topicID,
+      });
+      setTopicID('')
     },
   });
 
   const deleteTopicWithNotes = (topicId: string) => {
+    setTopicID(topicId);
+
     void deleteNoteMany.mutate({
       topicId: topicId,
-    });
-    void onDeleteTopic.mutate({
-      id: topicId,
     });
   };
 
@@ -156,7 +160,7 @@ const Content: React.FC = () => {
               </a>
               <button
                 className="btn-circle btn w-3"
-                onClick={() => deleteTopicWithNotes(topic.id)}
+                onClick={() => void deleteTopicWithNotes(topic.id)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
