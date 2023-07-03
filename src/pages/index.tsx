@@ -42,6 +42,7 @@ function AuthShowcase() {
 
   return (
     <>
+      
       {!sessionData && <Welcome />}
       {sessionData && <Content />}
       <div className="flex flex-col items-center justify-center gap-4">

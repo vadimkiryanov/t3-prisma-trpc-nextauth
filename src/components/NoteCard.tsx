@@ -20,7 +20,7 @@ export const NoteCard = ({
       <div className="card-body m-0 p-3">
         <div
           className={`collapse-arrow ${
-            isExpanded ? "collapse-open" : ""
+            isExpanded  ? "collapse-open" : ""
           } collapse`}
           onClick={() => setIsExpanded(!isExpanded)}
         >

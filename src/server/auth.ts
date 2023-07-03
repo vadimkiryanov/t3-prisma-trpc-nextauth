@@ -11,8 +11,8 @@ import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 
 /**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
- * object and keep type safety.
+ * Расширение модуля для типов `next-auth`. Позволяет нам добавлять пользовательские свойства к сессии.
+ * объект и сохранять типы в безопасности.
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
@@ -32,7 +32,7 @@ declare module "next-auth" {
 }
 
 /**
- * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
+ * Параметры для NextAuth.js, используемые для настройки адаптеров, провайдеров, обратных вызовов и т.д.
  *
  * @see https://next-auth.js.org/configuration/options
  */
@@ -57,11 +57,11 @@ export const authOptions: NextAuthOptions = {
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
     /**
-     * ...add more providers here.
+     * ...добавить больше провайдеров здесь.
      *
-     * Most other providers require a bit more work than the GITHUB provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
+     * Большинство других провайдеров требуют немного больше работы, чем провайдер GITHUB. Например.
+     * провайдер GitHub требует добавить поле `refresh_token_expires_in` в модель аккаунта.
+     * модели. Обратитесь к документации NextAuth.js для провайдера, который вы хотите использовать. Пример:
      *
      * @see https://next-auth.js.org/providers/github
      */
@@ -69,7 +69,7 @@ export const authOptions: NextAuthOptions = {
 };
 
 /**
- * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
+ * Обертка для `getServerSession`, чтобы вам не нужно было импортировать `authOptions` в каждый файл.
  *
  * @see https://next-auth.js.org/configuration/nextjs
  */
