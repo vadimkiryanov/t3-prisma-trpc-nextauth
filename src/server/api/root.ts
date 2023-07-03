@@ -12,6 +12,7 @@ export const appRouter = createTRPCRouter({
   example: exampleRouter,
   topic: topicRouter,
   note: noteRouter,
+
 });
 
 // определение типа экспорта API
