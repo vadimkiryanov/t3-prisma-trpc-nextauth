@@ -22,4 +22,15 @@ export const topicRouter = createTRPCRouter({
         },
       });
     }),
+  
+    // Удаление топика
+    delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.topic.delete({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
 });
